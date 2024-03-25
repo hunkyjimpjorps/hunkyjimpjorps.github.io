@@ -1,17 +1,23 @@
+import date
 import content.{
   type Content, type Err, type InlineContent, type Page, type Post, InlineLink,
-  Link, Page, Paragraph, Post, Section, StaticMarkdown, StringError, Text,
+  Link, Page, Paragraph, Post, StaticMarkdown, StringError, Text,
 }
 import gleam/result
 import gleam/string
 import simplifile
-import gleam/io
+import gleam/regex
 
 const post_path = "/posts/"
 
 const post_source_path = "./static/posts/"
 
 pub fn post(filename: String) -> Result(Post, Err) {
+  let assert Ok(re) = regex.from_string("-([0-9]{4})([0-9]{2})([0-9]{2}).md")
+  let date =
+    regex.scan(with: re, content: filename)
+    |> date.match_to_date
+
   use #(title, _) <- result.map(
     filename
     |> string.split_once(".md")
@@ -31,6 +37,7 @@ pub fn post(filename: String) -> Result(Post, Err) {
       |> string.replace("-", " ")
       |> string.capitalise,
     subtitle: subtitle,
+    date: date,
     src: post_path <> filename,
   )
 }
@@ -49,7 +56,7 @@ pub fn dynamic_route(post: Post) -> #(String, Page) {
 
 pub fn link_and_above(post: Post) -> Content {
   case post.subtitle {
-    Ok(text) -> Paragraph([inline_link(post), text])
-    Error(_) -> link(post)
+    Ok(text) -> Paragraph([inline_link(post), Text(post.date), text])
+    Error(_) -> Paragraph([inline_link(post), Text(post.date)])
   }
 }

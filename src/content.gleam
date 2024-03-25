@@ -15,6 +15,7 @@ pub type Post {
   Post(
     path: String,
     title: String,
+    date: String,
     subtitle: Result(InlineContent, Nil),
     src: String,
   )
