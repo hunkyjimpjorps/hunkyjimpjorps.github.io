@@ -22,7 +22,7 @@ pub type Post {
 }
 
 pub type Page {
-  Page(title: String, content: List(Content))
+  Page(title: String, content: List(Content), footer: Content)
 }
 
 pub type Content {
@@ -125,6 +125,7 @@ pub fn render_page(page: Page) -> Element(msg) {
         [attribute.class("container")],
         list.map(page.content, render_content),
       ),
+      html.footer([attribute.class("container")], [render_content(page.footer)]),
     ]),
   ])
 }

@@ -51,7 +51,14 @@ pub fn inline_link(post: Post) -> InlineContent {
 }
 
 pub fn dynamic_route(post: Post) -> #(String, Page) {
-  #(post.path, Page(title: post.title, content: [StaticMarkdown(post.src)]))
+  #(
+    post.path,
+    Page(
+      title: post.title,
+      content: [StaticMarkdown(post.src)],
+      footer: Paragraph([Text("footer")]),
+    ),
+  )
 }
 
 pub fn link_and_above(post: Post) -> Content {
