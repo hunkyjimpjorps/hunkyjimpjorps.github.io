@@ -40,6 +40,7 @@ pub type Content {
 
 pub type InlineContent {
   Bold(String)
+  Emph(String)
   Code(String)
   Text(String)
   InlineLink(href: String, text: String)
@@ -82,6 +83,7 @@ pub fn render_content(content: Content) -> Element(msg) {
 fn render_inline_content(content: InlineContent) -> Element(msg) {
   case content {
     Bold(text) -> html.strong([], [element.text(text)])
+    Emph(text) -> html.em([], [element.text(text)])
     Code(text) -> html.code([], [element.text(text)])
     Text(text) -> element.text(text)
     InlineLink(href, text) ->

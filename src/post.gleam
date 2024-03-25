@@ -1,7 +1,7 @@
 import date
 import content.{
-  type Content, type Err, type InlineContent, type Page, type Post, InlineLink,
-  Link, Page, Paragraph, Post, StaticMarkdown, StringError, Text,
+  type Content, type Err, type InlineContent, type Page, type Post, Emph,
+  InlineLink, Link, Page, Paragraph, Post, StaticMarkdown, StringError, Text,
 }
 import gleam/result
 import gleam/string
@@ -20,9 +20,9 @@ pub fn post(filename: String) -> Result(Post, Err) {
 
   use #(title, _) <- result.map(
     filename
-    |> string.split_once(".md")
+    |> string.split_once("-")
     |> result.replace_error(StringError(
-      "failed to remove .md suffix from '" <> filename <> "'",
+      "failed to remove date and md suffix from '" <> filename <> "'",
     )),
   )
   let assert Ok(all_content) = simplifile.read(post_source_path <> filename)
@@ -56,7 +56,7 @@ pub fn dynamic_route(post: Post) -> #(String, Page) {
 
 pub fn link_and_above(post: Post) -> Content {
   case post.subtitle {
-    Ok(text) -> Paragraph([inline_link(post), Text(post.date), text])
-    Error(_) -> Paragraph([inline_link(post), Text(post.date)])
+    Ok(text) -> Paragraph([inline_link(post), Emph(post.date), text])
+    Error(_) -> Paragraph([inline_link(post), Emph(post.date)])
   }
 }
