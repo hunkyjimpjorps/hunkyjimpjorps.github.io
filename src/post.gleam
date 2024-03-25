@@ -1,6 +1,6 @@
 import content.{
   type Content, type Err, type Page, type Post, Link, Page, Post, StaticMarkdown,
-  StringError, Paragraph, Text, Grid
+  StringError, Paragraph, Text, Grid, Section
 }
 import gleam/result
 import gleam/string
@@ -45,13 +45,12 @@ pub fn above_the_fold(post: Post) -> Content {
   let assert Ok(all_content) = simplifile.read(post.static)
 
   let above = case string.split_once(all_content, "<!--more-->") {
-    Ok(#(top, _)) -> top
-    Error(_) -> ""
+    Ok(#(top, _)) ->   Paragraph([Text(top)])
+    Error(_) -> Paragraph([])
   }
 
-  Paragraph([Text(above)])
 }
 
 pub fn link_and_above(post: Post) -> Content {
-  Grid([link(post), above_the_fold(post)])
+  Section([link(post), above_the_fold(post)])
 }
