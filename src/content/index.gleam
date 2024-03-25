@@ -10,7 +10,7 @@ pub fn page(posts: List(Post)) -> Page {
     Title("jimpjorps writes stuff"),
     Section([
       Paragraph([Text("All published posts")]),
-      List(list.map(posts, post.link)),
+      List(list.map(posts, post.link_and_above)),
     ]),
   ])
 }

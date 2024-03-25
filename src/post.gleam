@@ -1,9 +1,10 @@
 import content.{
   type Content, type Err, type Page, type Post, Link, Page, Post, StaticMarkdown,
-  StringError,
+  StringError, Paragraph, Text, Grid
 }
 import gleam/result
 import gleam/string
+import simplifile
 
 const post_path = "/posts/"
 
@@ -34,4 +35,19 @@ pub fn link(post: Post) -> Content {
 
 pub fn dynamic_route(post: Post) -> #(String, Page) {
   #(post.path, Page(title: post.title, content: [StaticMarkdown(post.src)]))
+}
+
+pub fn above_the_fold(post: Post) -> Content {
+  let assert Ok(all_content) = simplifile.read(post.src)
+
+  let above = case string.split_once(all_content, "<!--more-->") {
+    Ok(#(top, _)) -> top
+    Error(_) -> ""
+  }
+
+  Paragraph([Text(above)])
+}
+
+pub fn link_and_above(post: Post) -> Content {
+  Grid([link(post), above_the_fold(post)])
 }
