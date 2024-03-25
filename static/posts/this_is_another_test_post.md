@@ -1,5 +1,5 @@
 This is content that's above the fold
 
-<!--above-->
+<!--more-->
 
 This is content that's below the fold

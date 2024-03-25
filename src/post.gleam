@@ -5,8 +5,10 @@ import content.{
 import gleam/result
 import gleam/string
 import simplifile
+import gleam/io
 
 const post_path = "/posts/"
+const posts_dir = "./static/posts/"
 
 pub fn post(filename: String) -> Result(Post, Err) {
   use #(title, _) <- result.map(
@@ -26,6 +28,7 @@ pub fn post(filename: String) -> Result(Post, Err) {
     |> string.capitalise,
     src: post_path
     <> filename,
+    static: posts_dir <> filename
   )
 }
 
@@ -38,7 +41,8 @@ pub fn dynamic_route(post: Post) -> #(String, Page) {
 }
 
 pub fn above_the_fold(post: Post) -> Content {
-  let assert Ok(all_content) = simplifile.read(post.src)
+  io.debug(post.static)
+  let assert Ok(all_content) = simplifile.read(post.static)
 
   let above = case string.split_once(all_content, "<!--more-->") {
     Ok(#(top, _)) -> top

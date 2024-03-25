@@ -12,7 +12,7 @@ pub type Err {
 }
 
 pub type Post {
-  Post(path: String, title: String, src: String)
+  Post(path: String, title: String, src: String, static: String)
 }
 
 pub type Page {
