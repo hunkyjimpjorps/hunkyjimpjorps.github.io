@@ -9,6 +9,8 @@ import gleam/io
 
 const post_path = "/posts/"
 
+const post_source_path = "./static/posts/"
+
 pub fn post(filename: String) -> Result(Post, Err) {
   use #(title, _) <- result.map(
     filename
@@ -17,7 +19,7 @@ pub fn post(filename: String) -> Result(Post, Err) {
       "failed to remove .md suffix from '" <> filename <> "'",
     )),
   )
-  let assert Ok(all_content) = simplifile.read(post_path <> filename)
+  let assert Ok(all_content) = simplifile.read(post_source_path <> filename)
   let subtitle = case string.split_once(all_content, "<!--more-->") {
     Ok(#(top, _)) -> Ok(Paragraph([Text(top)]))
     Error(_) -> Error(Nil)
