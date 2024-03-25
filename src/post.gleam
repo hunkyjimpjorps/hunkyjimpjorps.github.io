@@ -1,6 +1,6 @@
 import content.{
-  type Content, type Err, type Page, type Post, Link, Page, Paragraph, Post,
-  Section, StaticMarkdown, StringError, Text,
+  type Content, type Err, type InlineContent, type Page, type Post, InlineLink,
+  Link, Page, Paragraph, Post, Section, StaticMarkdown, StringError, Text,
 }
 import gleam/result
 import gleam/string
@@ -21,7 +21,7 @@ pub fn post(filename: String) -> Result(Post, Err) {
   )
   let assert Ok(all_content) = simplifile.read(post_source_path <> filename)
   let subtitle = case string.split_once(all_content, "<!--more-->") {
-    Ok(#(top, _)) -> Ok(Paragraph([Text(top)]))
+    Ok(#(top, _)) -> Ok(Text(top))
     Error(_) -> Error(Nil)
   }
   Post(
@@ -39,13 +39,17 @@ pub fn link(post: Post) -> Content {
   Link(href: post_path <> post.path, text: post.title)
 }
 
+pub fn inline_link(post: Post) -> InlineContent {
+  InlineLink(href: post_path <> post.path, text: post.title)
+}
+
 pub fn dynamic_route(post: Post) -> #(String, Page) {
   #(post.path, Page(title: post.title, content: [StaticMarkdown(post.src)]))
 }
 
 pub fn link_and_above(post: Post) -> Content {
   case post.subtitle {
-    Ok(text) -> Section([link(post), text])
+    Ok(text) -> Paragraph([inline_link(post), text])
     Error(_) -> link(post)
   }
 }

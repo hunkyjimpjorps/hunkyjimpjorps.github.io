@@ -12,7 +12,12 @@ pub type Err {
 }
 
 pub type Post {
-  Post(path: String, title: String, subtitle: Result(Content, Nil), src: String)
+  Post(
+    path: String,
+    title: String,
+    subtitle: Result(InlineContent, Nil),
+    src: String,
+  )
 }
 
 pub type Page {
@@ -36,6 +41,7 @@ pub type InlineContent {
   Bold(String)
   Code(String)
   Text(String)
+  InlineLink(href: String, text: String)
 }
 
 fn static_md_block(attrs: List(Attribute(msg))) -> Element(msg) {
@@ -52,7 +58,7 @@ pub fn render_content(content: Content) -> Element(msg) {
       html.p(
         [],
         list.map(content, render_inline_content)
-        |> list.intersperse(html.br([])),
+          |> list.intersperse(html.br([])),
       )
     Snippet(lang, code) ->
       html.pre([attribute("data-lang", lang)], [
@@ -77,6 +83,8 @@ fn render_inline_content(content: InlineContent) -> Element(msg) {
     Bold(text) -> html.strong([], [element.text(text)])
     Code(text) -> html.code([], [element.text(text)])
     Text(text) -> element.text(text)
+    InlineLink(href, text) ->
+      html.a([attribute("href", href)], [element.text(text)])
   }
 }
 
