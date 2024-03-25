@@ -2,7 +2,9 @@ import date
 import content.{
   type Content, type Err, type InlineContent, type Page, type Post, Emph,
   InlineLink, Link, Page, Paragraph, Post, StaticMarkdown, StringError, Text,
+  Title,
 }
+import standards
 import gleam/result
 import gleam/string
 import simplifile
@@ -55,8 +57,8 @@ pub fn dynamic_route(post: Post) -> #(String, Page) {
     post.path,
     Page(
       title: post.title,
-      content: [StaticMarkdown(post.src)],
-      footer: Paragraph([Text("footer")]),
+      content: [Title(post.title), StaticMarkdown(post.src)],
+      footer: standards.footer(),
     ),
   )
 }

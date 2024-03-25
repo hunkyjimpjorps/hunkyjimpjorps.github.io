@@ -1,10 +1,10 @@
 import content.{
-  type Page, type Post, Bold, Code, Heading, List, Page, Paragraph, Section,
-  Snippet, Subheading, Text, Title,
+  type Page, type Post, List, Page, Paragraph, Section, Text, Title,
 }
 import gleam/list
 import post
 import date
+import standards
 
 pub fn page(posts: List(Post)) -> Page {
   Page(
@@ -20,6 +20,6 @@ pub fn page(posts: List(Post)) -> Page {
         ),
       ]),
     ],
-    footer: Paragraph([Text("footer")]),
+    footer: standards.footer(),
   )
 }
