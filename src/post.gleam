@@ -1,6 +1,6 @@
 import content.{
-  type Content, type Err, type Page, type Post, Grid, Link, Page, Paragraph,
-  Post, Section, StaticMarkdown, StringError, Text,
+  type Content, type Err, type Page, type Post, Link, Page, Paragraph, Post,
+  Section, StaticMarkdown, StringError, Text,
 }
 import gleam/result
 import gleam/string
@@ -8,8 +8,6 @@ import simplifile
 import gleam/io
 
 const post_path = "/posts/"
-
-const posts_dir = "./static/posts/"
 
 pub fn post(filename: String) -> Result(Post, Err) {
   use #(title, _) <- result.map(
@@ -19,14 +17,19 @@ pub fn post(filename: String) -> Result(Post, Err) {
       "failed to remove .md suffix from '" <> filename <> "'",
     )),
   )
+  let assert Ok(all_content) = simplifile.read(post_path <> filename)
+  let subtitle = case string.split_once(all_content, "<!--more-->") {
+    Ok(#(top, _)) -> Ok(Paragraph([Text(top)]))
+    Error(_) -> Error(Nil)
+  }
   Post(
     path: title,
     title: title
       |> string.replace("_", " ")
       |> string.replace("-", " ")
       |> string.capitalise,
+    subtitle: subtitle,
     src: post_path <> filename,
-    static: posts_dir <> filename,
   )
 }
 
@@ -38,18 +41,8 @@ pub fn dynamic_route(post: Post) -> #(String, Page) {
   #(post.path, Page(title: post.title, content: [StaticMarkdown(post.src)]))
 }
 
-pub fn above_the_fold(post: Post) -> Result(Content, Nil) {
-  io.debug(post.static)
-  let assert Ok(all_content) = simplifile.read(post.static)
-
-  let above = case string.split_once(all_content, "<!--more-->") {
-    Ok(#(top, _)) -> Ok(Paragraph([Text(top)]))
-    Error(_) -> Error(Nil)
-  }
-}
-
 pub fn link_and_above(post: Post) -> Content {
-  case above_the_fold(post) {
+  case post.subtitle {
     Ok(text) -> Section([link(post), text])
     Error(_) -> link(post)
   }
